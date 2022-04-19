@@ -1,6 +1,10 @@
-import ReactDOM from 'react-dom/client';
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom/client';
 
+import NewComment from './NewComment.jsx';
+import Comment from './Comment.jsx';
+import LoadMoreButton from './LoadMoreButton.jsx';
+import Loader from './Loader.jsx';
 import { commentSize } from './constants';
 import './styles.css';
 
@@ -19,7 +23,7 @@ const App = () => {
             console.log(json);
             setComments([...json])
         } catch (error) {
-            console.log('error', error);
+            console.log(error);
         }
         setIsFetching(false);    
     }
@@ -48,7 +52,7 @@ const App = () => {
             });
             
         } catch (error) {
-            console.log('error', error)
+            console.log(error)
         }
         setNewCommentText("");
         setIsPosting(false);
@@ -56,26 +60,21 @@ const App = () => {
 
 
  return <>
- <textarea
-    value={newCommentText}
-    className="newComment"
-    placeholder="Type in a comment"
+ <NewComment
+    newCommentText={newCommentText}
     onChange={e => setNewCommentText(e.target.value)}
- ></textarea>
- <div className={`addButton ${isPosting ? "disabled" : ""}`} onClick={addComment}>Add Comment</div>
+    onClick={addComment}
+    isPosting={isPosting}
+/>
  {comments?.length ? comments?.map((element, index)=>
- <div key={index} className="commentWrapper">
-     <div className="commentTitle">{element?.title}</div>
-     <div className="commentBody">{element?.body}</div>
- </div>)
+ <Comment 
+    key={index}
+    title={element?.title}
+    body={element?.body}
+ />)
  : null}
- {!isFetching ? <div className="loadButton" onClick={loadMoreComments}>See 20 more comments</div> : null}
- {isFetching ? <div className="loaderWrapper"><div className="lds-ellipsis">
-     <div></div>
-     <div></div>
-     <div></div>
-     </div>
-     </div> : null}
+ {!isFetching ? <LoadMoreButton onClick={loadMoreComments} /> : null}
+ {isFetching ? <Loader /> : null}
      </>;
  }
 
